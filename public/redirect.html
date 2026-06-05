@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Redirecting to Payzone</title>
+  </head>
+  <body>
+    <form id="openPaywall" action="https://test-paywall.url.ma/launch" method="POST">
+      <input type="hidden" name="payload" id="payload" value="" />
+      <input type="hidden" name="signature" id="signature" value="" />
+    </form>
+    <script>
+      // This page expects the server to provide payload/signature when POSTing to /pay
+      fetch('/pay', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({})
+      })
+        .then((r) => r.json())
+        .then((data) => {
+          document.getElementById('payload').value = data.payload;
+          document.getElementById('signature').value = data.signature;
+          document.getElementById('openPaywall').action = data.paywallUrl || document.getElementById('openPaywall').action;
+          document.getElementById('openPaywall').submit();
+        })
+        .catch((err) => console.error('Error fetching payment data', err));
+    </script>
+  </body>
+  </html>
